@@ -1,12 +1,12 @@
 {
   "main": "pedidos-api.raml",
   "name": "pedidos-api",
-  "classifier": "raml",
-  "tags": [],
-  "groupId": "br.com.dayzero",
+  "groupId": "1b88a96a-3c95-4a05-b047-79e7a13b7a96",
   "assetId": "pedidos-api",
   "version": "1.0.0",
-  "apiVersion": "v1",
-  "organizationId": "br.com.dayzero",
-  "dependencies": []
+  "classifier": "raml",
+  "tags": [],
+  "descriptorVersion": "1.0.0",
+  "organizationId": "1b88a96a-3c95-4a05-b047-79e7a13b7a96",
+  "apiVersion": "v1"
 }
