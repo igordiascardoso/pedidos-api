@@ -1,0 +1,21 @@
+{
+  "total": 1,
+  "pagina": 1,
+  "itens": [
+    {
+      "id": "PED-5001",
+      "clienteId": "CLI-1001",
+      "situacao": "CONFIRMADO",
+      "valorTotal": 1948.8,
+      "itens": [
+        {
+          "sku": "SKU-0042",
+          "descricao": "Teclado mecanico ABNT2",
+          "quantidade": 2,
+          "precoUnitario": 349.9
+        }
+      ],
+      "criadoEm": "2026-08-20T09:15:00Z"
+    }
+  ]
+}

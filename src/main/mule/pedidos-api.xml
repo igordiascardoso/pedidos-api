@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+    <configuration-properties file="config-dev.properties" />
+    <http:listener-config name="pedidos-api-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="${http.port}" />
+    </http:listener-config>
+    <apikit:config name="pedidos-api-config" api="pedidos-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <flow name="pedidos-api-main">
+        <http:listener config-ref="pedidos-api-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="pedidos-api-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <set-variable variableName="outboundHeaders" value="#[{'Content-Type':'application/json'}]" />
+                <set-payload value="{ &quot;message&quot;: &quot;Bad request&quot; }" />
+                <set-variable variableName="httpStatus" value="400" />
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <set-variable variableName="outboundHeaders" value="#[{'Content-Type':'application/json'}]" />
+                <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" />
+                <set-variable variableName="httpStatus" value="404" />
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <set-variable variableName="outboundHeaders" value="#[{'Content-Type':'application/json'}]" />
+                <set-payload value="{ &quot;message&quot;: &quot;Method not allowed&quot; }" />
+                <set-variable variableName="httpStatus" value="405" />
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <set-variable variableName="outboundHeaders" value="#[{'Content-Type':'application/json'}]" />
+                <set-payload value="{ &quot;message&quot;: &quot;Not acceptable&quot; }" />
+                <set-variable variableName="httpStatus" value="406" />
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <set-variable variableName="outboundHeaders" value="#[{'Content-Type':'application/json'}]" />
+                <set-payload value="{ &quot;message&quot;: &quot;Unsupported media type&quot; }" />
+                <set-variable variableName="httpStatus" value="415" />
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <set-variable variableName="outboundHeaders" value="#[{'Content-Type':'application/json'}]" />
+                <set-payload value="{ &quot;message&quot;: &quot;Not Implemented&quot; }" />
+                <set-variable variableName="httpStatus" value="501" />
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="pedidos-api-console">
+        <http:listener config-ref="pedidos-api-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="pedidos-api-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <set-variable variableName="outboundHeaders" value="#[{'Content-Type':'application/json'}]" />
+                <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" />
+                <set-variable variableName="httpStatus" value="404" />
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="put:\pedidos\(pedidoId)\cancelamento:pedidos-api-config">
+        <set-variable value="#[attributes.uriParams.pedidoId]" variableName="pedidoId" />
+        <logger level="INFO" message="put:\pedidos\(pedidoId)\cancelamento:pedidos-api-config" />
+    </flow>
+    <flow name="put:\pedidos\(pedidoId)\confirmacao:pedidos-api-config">
+        <set-variable value="#[attributes.uriParams.pedidoId]" variableName="pedidoId" />
+        <logger level="INFO" message="put:\pedidos\(pedidoId)\confirmacao:pedidos-api-config" />
+    </flow>
+    <flow name="get:\pedidos\(pedidoId)\itens:pedidos-api-config">
+        <set-variable value="#[attributes.uriParams.pedidoId]" variableName="pedidoId" />
+        <logger level="INFO" message="get:\pedidos\(pedidoId)\itens:pedidos-api-config" />
+    </flow>
+    <flow name="get:\pedidos:pedidos-api-config">
+        <logger level="INFO" message="get:\pedidos:pedidos-api-config" />
+    </flow>
+    <flow name="get:\pedidos\(pedidoId):pedidos-api-config">
+        <set-variable value="#[attributes.uriParams.pedidoId]" variableName="pedidoId" />
+        <logger level="INFO" message="get:\pedidos\(pedidoId):pedidos-api-config" />
+    </flow>
+    <flow name="get:\health:pedidos-api-config">
+        <logger level="INFO" message="Healthcheck da Pedidos API" />
+        <ee:transform>
+            <ee:variables>
+                <ee:set-variable variableName="pedidos"><![CDATA[%dw 2.0
+output application/java
+---
+[
+  { id: "PED-5001", clienteId: "CLI-1001", situacao: "CONFIRMADO",
+    itens: [
+      { sku: "SKU-0042", quantidade: 2, precoUnitario: 349.90 },
+      { sku: "SKU-0117", quantidade: 1, precoUnitario: 1249.00 }
+    ] }
+]]]></ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <!-- Checagem propria desta API: integridade pedido<->itens. Recalcula o
+             total a partir dos itens e cobra as invariantes do dominio. -->
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+var pedidos = vars.pedidos
+var semItem = pedidos filter (isEmpty($.itens default []))
+var itensOrfaos = (pedidos flatMap ((p) ->
+    (p.itens default []) filter (isEmpty($.sku) or ($.quantidade default 0) <= 0)))
+var integro = isEmpty(semItem) and isEmpty(itensOrfaos)
+---
+{
+  status: if (integro) "UP" else "DEGRADED",
+  api: p("api.nome") default "pedidos-api",
+  versao: p("api.versao") default "1.0.0",
+  porta: (p("http.port") default "8082") as Number,
+  verificadoEm: now() as String { format: "yyyy-MM-dd'T'HH:mm:ss'Z'" },
+  detalhes: {
+    storePedidos: if (isEmpty(pedidos)) "DOWN" else "UP",
+    pedidosCarregados: sizeOf(pedidos),
+    itensOrfaos: sizeOf(itensOrfaos),
+    pedidosSemItem: sizeOf(semItem),
+    dependenciaClientesApi: "NAO_VERIFICADO"
+  }
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="post:\pedidos\(pedidoId)\itens:application\json:pedidos-api-config">
+        <set-variable value="#[attributes.uriParams.pedidoId]" variableName="pedidoId" />
+        <logger level="INFO" message="post:\pedidos\(pedidoId)\itens:application\json:pedidos-api-config" />
+    </flow>
+    <flow name="post:\pedidos:application\json:pedidos-api-config">
+        <logger level="INFO" message="post:\pedidos:application\json:pedidos-api-config" />
+    </flow>
+</mule>

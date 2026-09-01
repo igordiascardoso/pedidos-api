@@ -1,0 +1,14 @@
+[
+  {
+    "sku": "SKU-0042",
+    "descricao": "Teclado mecanico ABNT2",
+    "quantidade": 2,
+    "precoUnitario": 349.9
+  },
+  {
+    "sku": "SKU-0117",
+    "descricao": "Monitor 24 polegadas IPS",
+    "quantidade": 1,
+    "precoUnitario": 1249.0
+  }
+]

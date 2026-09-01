@@ -1,0 +1,11 @@
+{
+  "clienteId": "CLI-1001",
+  "itens": [
+    {
+      "sku": "SKU-0042",
+      "descricao": "Teclado mecanico ABNT2",
+      "quantidade": 2,
+      "precoUnitario": 349.9
+    }
+  ]
+}

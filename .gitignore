@@ -1,0 +1,8 @@
+# Build do Maven e dados de runtime do Mule
+target/
+.mule/
+
+# Anypoint Studio
+.project
+.classpath
+.settings/

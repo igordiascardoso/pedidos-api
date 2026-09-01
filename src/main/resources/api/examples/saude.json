@@ -1,0 +1,14 @@
+{
+  "status": "UP",
+  "api": "pedidos-api",
+  "versao": "1.0.0",
+  "porta": 8082,
+  "verificadoEm": "2026-09-01T12:00:00Z",
+  "detalhes": {
+    "storePedidos": "UP",
+    "pedidosCarregados": 1,
+    "itensOrfaos": 0,
+    "pedidosSemItem": 0,
+    "dependenciaClientesApi": "UP"
+  }
+}

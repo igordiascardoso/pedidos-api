@@ -1,0 +1,127 @@
+#%RAML 1.0
+title: Pedidos API
+version: v1
+baseUri: http://localhost:8082/api
+mediaType: application/json
+description: |
+  Pedidos do Day Zero. Cada pedido pertence a um cliente (Clientes API) e
+  carrega seus itens. Expoe o ciclo de vida do pedido: criacao, confirmacao
+  e cancelamento.
+
+uses:
+  Comum: traits/comum.raml
+
+types:
+  Pedido: !include types/pedido.raml
+  NovoPedido: !include types/novo-pedido.raml
+  ItemPedido: !include types/item-pedido.raml
+  ListaPedidos: !include types/lista-pedidos.raml
+  Saude: !include types/saude.raml
+  Erro: !include types/erro.raml
+
+/health:
+  displayName: Healthcheck
+  description: |
+    Healthcheck proprio da Pedidos API: confere a integridade entre pedidos e
+    seus itens (nenhum pedido sem item, nenhum item orfao) e o alcance da
+    Clientes API, que e a dependencia real desta API.
+  get:
+    responses:
+      200:
+        body:
+          type: Saude
+          example: !include examples/saude.json
+      503:
+        body:
+          type: Erro
+
+/pedidos:
+  get:
+    description: Lista pedidos.
+    is: [Comum.paginado]
+    queryParameters:
+      situacao?:
+        type: string
+        enum: [RASCUNHO, CONFIRMADO, CANCELADO]
+      clienteId?:
+        type: string
+        example: CLI-1001
+    responses:
+      200:
+        body:
+          type: ListaPedidos
+          example: !include examples/lista-pedidos.json
+  post:
+    description: Abre um pedido em RASCUNHO.
+    body:
+      type: NovoPedido
+      example: !include examples/novo-pedido.json
+    responses:
+      201:
+        body:
+          type: Pedido
+          example: !include examples/pedido.json
+      400:
+        body:
+          type: Erro
+
+  /{pedidoId}:
+    uriParameters:
+      pedidoId:
+        type: string
+        example: PED-5001
+    get:
+      description: Detalha um pedido com seus itens.
+      responses:
+        200:
+          body:
+            type: Pedido
+            example: !include examples/pedido.json
+        404:
+          body:
+            type: Erro
+
+    /itens:
+      get:
+        description: Lista os itens do pedido.
+        responses:
+          200:
+            body:
+              type: ItemPedido[]
+              example: !include examples/itens.json
+          404:
+            body:
+              type: Erro
+      post:
+        description: Acrescenta um item ao pedido em RASCUNHO.
+        body:
+          type: ItemPedido
+        responses:
+          201:
+            body:
+              type: Pedido
+          409:
+            body:
+              type: Erro
+            description: O pedido nao esta mais em RASCUNHO.
+
+    /confirmacao:
+      put:
+        description: Confirma o pedido e reserva o estoque.
+        responses:
+          200:
+            body:
+              type: Pedido
+          409:
+            body:
+              type: Erro
+    /cancelamento:
+      put:
+        description: Cancela o pedido.
+        responses:
+          200:
+            body:
+              type: Pedido
+          409:
+            body:
+              type: Erro
