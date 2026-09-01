@@ -4,7 +4,7 @@
     <http:listener-config name="pedidos-api-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="${http.port}" />
     </http:listener-config>
-    <apikit:config name="pedidos-api-config" api="pedidos-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="pedidos-api-config" api="resource::1b88a96a-3c95-4a05-b047-79e7a13b7a96:pedidos-api:1.0.0:raml:zip:pedidos-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="pedidos-api-main">
         <http:listener config-ref="pedidos-api-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">

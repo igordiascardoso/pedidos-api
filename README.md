@@ -80,6 +80,34 @@ ponte killrun          # encerra
 A porta sai de [src/main/resources/config-dev.properties](src/main/resources/config-dev.properties)
 via `${http.port}`, entao trocar de porta nao exige mexer no XML.
 
+## O RAML vem do Exchange
+
+O `pom.xml` consome o RAML como dependencia Maven do Exchange (`classifier: raml`), e o
+`apikit:config` referencia o asset por GAV — o padrao de um projeto real vindo do Design
+Center:
+
+```xml
+<dependency>
+  <groupId>1b88a96a-3c95-4a05-b047-79e7a13b7a96</groupId>
+  <artifactId>pedidos-api</artifactId>
+  <version>1.0.0</version>
+  <classifier>raml</classifier>
+  <type>zip</type>
+</dependency>
+```
+
+**Isso exige credencial Maven do Exchange** no seu `settings.xml`. Sem ela o `mvn package`
+falha com `401 Unauthorized` ao resolver o RAML — o login do `anypoint-cli` nao serve aqui,
+sao credenciais separadas.
+
+Para editar o RAML localmente sem depender do Exchange a cada build, use o apontamento da
+extensao:
+
+```
+ponte pararepo raml-local    # pom.xml e apikit:config passam a ler a sua pasta
+ponte pararepo raml-undo     # volta a depender do Exchange (antes de commitar)
+```
+
 ## Versoes
 
 Validadas contra o Mule Runtime 4.12.2 / Java 17:
